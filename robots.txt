@@ -1,0 +1,6 @@
+# Indica a todos los buscadores que pueden indexar la página
+User-agent: *
+Allow: /
+
+# Evita que se indexen archivos temporales o de configuración si existieran
+Disallow: /manifest.json

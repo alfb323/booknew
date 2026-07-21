@@ -1,0 +1,18 @@
+{
+  "short_name": "LibrosSeguros",
+  "name": "Libros Seguros - Lectura Libre y Legal",
+  "description": "Encuentra libros gratis y bibliotecas digitales confiables sin riesgos.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fffdf8",
+  "theme_color": "#172233",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2702/2702134.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}

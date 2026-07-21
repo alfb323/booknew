@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Fichero — biblioteca gratuita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Literata:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#182430;
+    --ink-2:#22303d;
+    --parchment:#f3ecd9;
+    --parchment-2:#e9dfc4;
+    --brass:#c69a3e;
+    --brass-dark:#a87c2a;
+    --stamp-red:#9c3b30;
+    --stamp-sage:#5f7256;
+    --text-dark:#2a2620;
+    --text-muted:#6b6455;
+    --text-light:#efe7d4;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text-light);
+    font-family:'Literata', serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit;}
+
+  /* ---------- header ---------- */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    padding:22px 5vw;
+    border-bottom:1px solid rgba(243,236,217,0.12);
+    position:sticky;
+    top:0;
+    background:rgba(24,36,48,0.92);
+    backdrop-filter:blur(6px);
+    z-index:50;
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .brand .mark{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.5rem;
+    letter-spacing:0.01em;
+    color:var(--brass);
+  }
+  .brand .tagline{
+    font-family:'Space Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+  .search-wrap{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--ink-2);
+    border:1px solid rgba(243,236,217,0.18);
+    border-radius:2px;
+    padding:9px 14px;
+    min-width:260px;
+    flex:1;
+    max-width:420px;
+  }
+  .search-wrap svg{flex-shrink:0;opacity:0.6;}
+  .search-wrap input{
+    background:none;
+    border:none;
+    outline:none;
+    color:var(--text-light);
+    font-family:'Literata', serif;
+    font-size:0.95rem;
+    width:100%;
+  }
+  .search-wrap input::placeholder{color:rgba(239,231,212,0.4);}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:88px 5vw 64px;
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:48px;
+    align-items:center;
+    max-width:1280px;
+    margin:0 auto;
+  }
+  .hero h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(2.4rem, 4.6vw, 4rem);
+    line-height:1.06;
+    margin:0 0 22px;
+    color:var(--text-light);
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--brass);
+    font-weight:500;
+  }
+  .hero p{
+    font-size:1.05rem;
+    line-height:1.65;
+    color:rgba(239,231,212,0.72);
+    max-width:46ch;
+    margin:0 0 28px;
+  }
+  .hero-stats{
+    display:flex;
+    gap:32px;
+    font-family:'Space Mono', monospace;
+  }
+  .hero-stats div strong{
+    display:block;
+    font-size:1.6rem;
+    color:var(--brass);
+  }
+  .hero-stats div span{
+    font-size:0.68rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+
+  /* signature drawer illustration */
+  .drawer{
+    position:relative;
+    height:320px;
+  }
+  .drawer svg{width:100%;height:100%;}
+
+  /* ---------- filters ---------- */
+  .filters{
+    max-width:1280px;
+    margin:0 auto;
+    padding:0 5vw 8px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .chip{
+    font-family:'Space Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:8px 16px;
+    border:1px solid rgba(243,236,217,0.25);
+    border-radius:20px;
+    background:transparent;
+    color:var(--text-light);
+    cursor:pointer;
+    transition:all 0.15s ease;
+  }
+  .chip:hover{border-color:var(--brass);}
+  .chip.active{
+    background:var(--brass);
+    border-color:var(--brass);
+    color:#20180a;
+  }
+  .status-text{
+    font-family:'Space Mono', monospace;
+    font-size:0.72rem;
+    color:var(--text-muted);
+    margin-left:auto;
+  }
+
+  /* ---------- catalog grid ---------- */
+  .catalog{
+    max-width:1280px;
+    margin:0 auto;
+    padding:36px 5vw 40px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));
+    gap:26px;
+  }
+
+  .card{
+    background:var(--parchment);
+    color:var(--text-dark);
+    border-radius:3px;
+    padding:20px 18px 18px;
+    position:relative;
+    box-shadow:0 1px 0 rgba(0,0,0,0.25), 0 14px 30px -18px rgba(0,0,0,0.6);
+    background-image:
+      linear-gradient(rgba(120,110,80,0.10) 1px, transparent 1px);
+    background-size: 100% 26px;
+    background-position: 0 64px;
+    transition:transform 0.25s ease, box-shadow 0.25s ease;
+    display:flex;
+    flex-direction:column;
+    min-height:280px;
+  }
+  .card:hover{
+    transform:translateY(-6px) rotate(-0.6deg);
+    box-shadow:0 1px 0 rgba(0,0,0,0.25), 0 26px 40px -18px rgba(0,0,0,0.7);
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:14px; left:14px;
+    width:11px; height:11px;
+    border-radius:50%;
+    background:var(--ink);
+    box-shadow:inset 0 0 0 2px var(--parchment-2), 0 0 0 1px rgba(0,0,0,0.15);
+  }
+  .call-number{
+    align-self:flex-end;
+    font-family:'Space Mono', monospace;
+    font-size:0.68rem;
+    color:var(--text-muted);
+    letter-spacing:0.04em;
+  }
+  .lang-badge{
+    display:inline-block;
+    margin-top:8px;
+    font-family:'Space Mono', monospace;
+    font-size:0.66rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    padding:3px 8px;
+    border-radius:2px;
+    font-weight:700;
+  }
+  .lang-badge.lang-en{
+    background:rgba(156,59,48,0.12);
+    color:var(--stamp-red);
+    border:1px solid rgba(156,59,48,0.4);
+  }
+  .lang-badge.lang-es{
+    background:rgba(95,114,86,0.12);
+    color:var(--stamp-sage);
+    border:1px solid rgba(95,114,86,0.4);
+  }
+  .card h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.28rem;
+    line-height:1.2;
+    margin:14px 0 4px;
+  }
+  .card .author{
+    font-size:0.85rem;
+    color:var(--text-muted);
+    font-style:italic;
+    margin-bottom:10px;
+  }
+  .card .synopsis{
+    font-size:0.86rem;
+    line-height:1.5;
+    color:#4a4437;
+    flex:1;
+  }
+  .card-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:16px;
+    padding-top:12px;
+    border-top:1px dashed rgba(90,80,60,0.3);
+    gap:8px;
+  }
+  .stamp{
+    font-family:'Space Mono', monospace;
+    font-size:0.62rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    padding:4px 9px;
+    border:1.5px solid var(--stamp-red);
+    color:var(--stamp-red);
+    border-radius:2px;
+    transform:rotate(-3deg);
+    opacity:0.85;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:52%;
+  }
+  .stamp.sage{border-color:var(--stamp-sage);color:var(--stamp-sage);}
+  .read-link{
+    font-family:'Space Mono', monospace;
+    font-size:0.72rem;
+    text-decoration:none;
+    color:var(--ink);
+    font-weight:700;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 12px;
+    background:var(--brass);
+    border:none;
+    border-radius:2px;
+    transition:background 0.15s ease;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .read-link:hover{background:var(--brass-dark);}
+
+  .empty{
+    grid-column:1/-1;
+    text-align:center;
+    padding:60px 20px;
+    color:rgba(239,231,212,0.5);
+    font-family:'Space Mono', monospace;
+    font-size:0.85rem;
+  }
+
+  .load-more-wrap{
+    max-width:1280px;
+    margin:0 auto;
+    padding:0 5vw 100px;
+    text-align:center;
+  }
+  .load-more{
+    font-family:'Space Mono', monospace;
+    font-size:0.75rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:12px 28px;
+    border:1px solid rgba(243,236,217,0.3);
+    border-radius:20px;
+    background:transparent;
+    color:var(--text-light);
+    cursor:pointer;
+  }
+  .load-more:hover{border-color:var(--brass);color:var(--brass);}
+  .load-more:disabled{opacity:0.4;cursor:default;}
+
+  footer{
+    padding:28px 5vw;
+    border-top:1px solid rgba(243,236,217,0.12);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+    font-family:'Space Mono', monospace;
+    font-size:0.7rem;
+    color:var(--text-muted);
+    letter-spacing:0.03em;
+  }
+
+  /* ---------- visor modal ---------- */
+  #visorContainer{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(10,15,20,0.94);
+    z-index:200;
+    padding:20px;
+  }
+  #visorContainer .cerrar{
+    display:block;
+    margin:0 0 14px auto;
+    padding:9px 18px;
+    background:var(--stamp-red);
+    color:#fff;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    font-family:'Space Mono', monospace;
+    font-size:0.78rem;
+  }
+  #visorIframe{
+    width:100%;
+    height:calc(100% - 50px);
+    border:none;
+    border-radius:6px;
+    background:#fff;
+  }
+
+  @media (max-width: 820px){
+    .hero{grid-template-columns:1fr;padding-top:56px;}
+    .drawer{height:220px;order:-1;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; scroll-behavior:auto !important;}
+  }
+
+  :focus-visible{
+    outline:2px solid var(--brass);
+    outline-offset:2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="mark">El Fichero</span>
+    <span class="tagline">biblioteca pública · siempre gratis</span>
+  </div>
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" type="text" placeholder="Buscar cualquier libro o autor…" autocomplete="off">
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <h1>Cada libro empieza<br> con <em>una ficha</em>.</h1>
+    <p>Un catálogo de obras de dominio público, listas para leer sin registros ni pagos. Busca cualquier título — el fichero conecta con el catálogo completo de Open Library.</p>
+    <div class="hero-stats">
+      <div><strong id="statCount">9</strong><span>Mostrados</span></div>
+      <div><strong>+1M</strong><span>Disponibles</span></div>
+      <div><strong>0</strong><span>Cuentas</span></div>
+    </div>
+  </div>
+  <div class="drawer" aria-hidden="true">
+    <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+      <rect x="40" y="40" width="320" height="230" rx="4" fill="#22303d" stroke="#3a4a58" stroke-width="2"/>
+      <rect x="60" y="70" width="280" height="40" rx="2" fill="#f3ecd9" transform="rotate(-2 200 90)"/>
+      <rect x="55" y="120" width="280" height="40" rx="2" fill="#e9dfc4" transform="rotate(1.5 200 140)"/>
+      <rect x="65" y="170" width="280" height="40" rx="2" fill="#f3ecd9" transform="rotate(-1 200 190)"/>
+      <circle cx="200" cy="255" r="16" fill="#c69a3e"/>
+      <rect x="192" y="250" width="16" height="10" rx="2" fill="#1a1408"/>
+    </svg>
+  </div>
+</section>
+
+<nav class="filters" id="filters">
+  <button class="chip active" data-genre="todos">Todos</button>
+  <button class="chip" data-genre="novela">Novela</button>
+  <button class="chip" data-genre="aventura">Aventura</button>
+  <button class="chip" data-genre="terror">Terror</button>
+  <button class="chip" data-genre="misterio">Misterio</button>
+  <button class="chip" data-genre="fantasia">Fantasía</button>
+  <span class="status-text" id="statusText"></span>
+</nav>
+
+<main class="catalog" id="catalog"></main>
+<div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+  <button class="load-more" id="loadMoreBtn">Cargar más libros</button>
+</div>
+
+<div id="visorContainer">
+  <button class="cerrar" id="cerrarVisor">Cerrar ✕</button>
+  <iframe id="visorIframe"></iframe>
+</div>
+
+<footer>
+  <span>El Fichero — destacados vía Project Gutenberg · búsqueda vía Open Library / Internet Archive.</span>
+  <span id="clock"></span>
+</footer>
+
+<script>
+  // ---------- catálogo destacado (siempre visible al abrir la página) ----------
+  const destacados = [
+    {
+      title: "Don Quijote de la Mancha",
+      author: "Miguel de Cervantes",
+      call: "ES · 863.3",
+      genre: "novela aventura",
+      tag: "Clásico español",
+      lang: "es",
+      synopsis: "Un hidalgo enloquecido por libros de caballería sale a buscar aventuras, con Sancho Panza a su lado.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/2000/pg2000-images.html"
+    },
+    {
+      title: "Orgullo y prejuicio",
+      author: "Jane Austen",
+      call: "EN · 823.7",
+      genre: "novela",
+      tag: "Romance",
+      synopsis: "Elizabeth Bennet enfrenta a la sociedad inglesa, el matrimonio y a un tal señor Darcy.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/1342/pg1342-images.html"
+    },
+    {
+      title: "Frankenstein",
+      author: "Mary Shelley",
+      call: "EN · 823.7",
+      genre: "terror",
+      tag: "Terror gótico",
+      synopsis: "Un científico da vida a una criatura y desata una tragedia que no puede controlar.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/84/pg84-images.html"
+    },
+    {
+      title: "Alicia en el país de las maravillas",
+      author: "Lewis Carroll",
+      call: "EN · 823.8",
+      genre: "fantasia",
+      tag: "Fantasía",
+      synopsis: "Una niña cae por una madriguera y llega a un mundo de lógica torcida y personajes absurdos.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/11/pg11-images.html"
+    },
+    {
+      title: "Drácula",
+      author: "Bram Stoker",
+      call: "EN · 823.8",
+      genre: "terror misterio",
+      tag: "Terror",
+      synopsis: "Diarios y cartas narran el avance de un conde transilvano hacia Inglaterra.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/345/pg345-images.html"
+    },
+    {
+      title: "Las aventuras de Sherlock Holmes",
+      author: "Arthur Conan Doyle",
+      call: "EN · 823.8",
+      genre: "misterio",
+      tag: "Misterio",
+      synopsis: "Doce casos donde el detective de Baker Street resuelve lo que nadie más puede ver.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/1661/pg1661-images.html"
+    },
+    {
+      title: "Moby Dick",
+      author: "Herman Melville",
+      call: "EN · 813.3",
+      genre: "aventura novela",
+      tag: "Aventura",
+      synopsis: "El capitán Ahab persigue a una ballena blanca por todos los mares del mundo.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/2701/pg2701-images.html"
+    },
+    {
+      title: "Historia de dos ciudades",
+      author: "Charles Dickens",
+      call: "EN · 823.8",
+      genre: "novela",
+      tag: "Novela histórica",
+      synopsis: "Londres y París se entrelazan en los años de la Revolución Francesa.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/98/pg98-images.html"
+    },
+    {
+      title: "El retrato de Dorian Gray",
+      author: "Oscar Wilde",
+      call: "EN · 823.8",
+      genre: "novela misterio",
+      tag: "Novela",
+      synopsis: "Un joven conserva su belleza eterna mientras su retrato carga con el peso de sus pecados.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/174/pg174-images.html"
+    },
+    {
+      title: "Grandes esperanzas",
+      author: "Charles Dickens",
+      call: "EN · 823.8",
+      genre: "novela",
+      tag: "Novela",
+      synopsis: "Pip, un huérfano, recibe una fortuna misteriosa que cambia el rumbo de toda su vida.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/1400/pg1400-images.html"
+    },
+    {
+      title: "Cumbres borrascosas",
+      author: "Emily Brontë",
+      call: "EN · 823.8",
+      genre: "novela terror",
+      tag: "Romance oscuro",
+      synopsis: "Una historia de amor obsesivo y venganza en los páramos ingleses.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/768/pg768-images.html"
+    },
+    {
+      title: "El conde de Montecristo",
+      author: "Alexandre Dumas",
+      call: "Inglés · trad.",
+      genre: "aventura novela",
+      tag: "Aventura",
+      synopsis: "Edmundo Dantés es traicionado y encarcelado injustamente; años después, vuelve por venganza. (Texto completo, en su traducción al inglés — no hay edición en español en dominio público.)",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/1184/pg1184-images.html"
+    },
+    {
+      title: "Los miserables",
+      author: "Victor Hugo",
+      call: "Inglés · trad.",
+      genre: "novela aventura",
+      tag: "Clásico francés",
+      synopsis: "Jean Valjean busca redención mientras un inspector implacable lo persigue por Francia. (Texto completo, en su traducción al inglés — no hay edición en español en dominio público.)",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/135/pg135-images.html"
+    },
+    {
+      title: "Crimen y castigo",
+      author: "Fiódor Dostoyevski",
+      call: "Inglés · trad.",
+      genre: "novela misterio",
+      tag: "Novela psicológica",
+      synopsis: "Un estudiante comete un crimen y carga con el peso moral de su propia culpa. (Texto completo, en su traducción al inglés — no hay edición en español en dominio público.)",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/2554/pg2554-images.html"
+    },
+    {
+      title: "The Call of Cthulhu",
+      author: "H. P. Lovecraft",
+      call: "EN · original",
+      genre: "terror misterio",
+      tag: "Terror cósmico",
+      lang: "en",
+      synopsis: "Un hombre reconstruye, a partir de notas de su tío abuelo, la existencia de un culto y una entidad ancestral dormida bajo el mar.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/68283/pg68283-images.html",
+      urlEs: "https://ciudadseva.com/texto/la-llamada-de-cthulhu/"
+    },
+    {
+      title: "At the Mountains of Madness",
+      author: "H. P. Lovecraft",
+      call: "EN · original",
+      genre: "terror aventura",
+      tag: "Terror cósmico",
+      lang: "en",
+      synopsis: "Una expedición científica a la Antártida descubre las ruinas de una civilización imposiblemente antigua. (En inglés — no existe una traducción libre confiable en dominio público.)",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/70652/pg70652-images.html"
+    },
+    {
+      title: "The Dunwich Horror",
+      author: "H. P. Lovecraft",
+      call: "EN · original",
+      genre: "terror",
+      tag: "Terror cósmico",
+      lang: "en",
+      synopsis: "En un pueblo aislado de Nueva Inglaterra, una familia oculta un secreto que amenaza con desatarse. (En inglés, texto original.)",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/50133/pg50133-images.html"
+    },
+    {
+      title: "The Shadow over Innsmouth",
+      author: "H. P. Lovecraft",
+      call: "EN · original",
+      genre: "terror misterio",
+      tag: "Terror cósmico",
+      lang: "en",
+      synopsis: "Un viajero llega a un puerto decadente donde sus habitantes esconden un origen inquietante. (En inglés, texto original.)",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/73181/pg73181-images.html"
+    },
+    {
+      title: "The Colour Out of Space",
+      author: "H. P. Lovecraft",
+      call: "EN · original",
+      genre: "terror fantasia",
+      tag: "Terror cósmico",
+      lang: "en",
+      synopsis: "Un meteorito cae en una granja rural y corrompe lentamente todo lo que toca.",
+      type: "link",
+      url: "https://www.gutenberg.org/cache/epub/68236/pg68236-images.html",
+      urlEs: "https://ciudadseva.com/texto/el-color-que-cayo-del-cielo/"
+    }
+  ];
+
+  const catalog = document.getElementById('catalog');
+  const searchInput = document.getElementById('searchInput');
+  const filters = document.getElementById('filters');
+  const statCount = document.getElementById('statCount');
+  const statusText = document.getElementById('statusText');
+  const loadMoreWrap = document.getElementById('loadMoreWrap');
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+  let activeGenre = 'todos';
+  let debounceTimer = null;
+  let modo = 'destacados'; // 'destacados' | 'busqueda'
+  let queryActual = '';
+  let paginaActual = 1;
+  const RESULTADOS_POR_PAGINA = 24;
+
+  function stampClass(genre){
+    return genre.includes('terror') || genre.includes('misterio') ? '' : 'sage';
+  }
+
+  function crearCardDestacado(b){
+    const card = document.createElement('article');
+    card.className = 'card';
+    // si no se especificó lang explícitamente, lo inferimos del campo "call"
+    const lang = b.lang || (b.call.startsWith('ES') ? 'es' : 'en');
+    const langLabel = lang === 'es' ? 'Español' : 'Solo en inglés';
+    const tieneEs = !!b.urlEs;
+    const urlPrincipal = tieneEs ? b.urlEs : b.url;
+    const botonSecundarioEn = tieneEs ? `
+        <a class="read-link" href="${b.url}" target="_blank" rel="noopener" style="background:transparent;border:1px solid rgba(239,231,212,0.3);color:var(--text-dark);">
+          Original en inglés
+        </a>` : '';
+    const notaEs = tieneEs ? `<p style="font-size:0.72rem;color:var(--text-muted);margin:6px 0 0;font-style:italic;">La versión en español es de lectura libre (Ciudad Seva), pero no es dominio público estricto — es una traducción con derechos propios.</p>` : '';
+    card.innerHTML = `
+      <span class="call-number">${b.call}</span>
+      <h3>${b.title}</h3>
+      <div class="author">${b.author}</div>
+      <span class="lang-badge lang-${tieneEs ? 'es' : lang}">${tieneEs ? 'Español (Ciudad Seva)' : langLabel}</span>
+      <p class="synopsis" style="margin-top:10px;">${b.synopsis}</p>
+      ${notaEs}
+      <div class="card-footer" style="flex-wrap:wrap;">
+        <span class="stamp ${stampClass(b.genre)}">${b.tag}</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${botonSecundarioEn}
+          <a class="read-link" href="${urlPrincipal}" target="_blank" rel="noopener">
+            Leer ahora
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+          </a>
+        </div>
+      </div>
+    `;
+    return card;
+  }
+
+  const IDIOMAS = { eng: 'Inglés', spa: 'Español', fre: 'Francés', fra: 'Francés', ger: 'Alemán', ita: 'Italiano', por: 'Portugués', rus: 'Ruso' };
+  const TRADUCCIONES = {
+    "Fiction":"Ficción",
+    "Adventure":"Aventura",
+    "Mystery":"Misterio",
+    "Fantasy":"Fantasía",
+    "Horror":"Terror",
+    "Romance":"Romance",
+    "History":"Historia",
+    "Children":"Infantil",
+    "Science fiction":"Ciencia ficción",
+    "Adventure stories":"Historias de aventuras",
+    "Detective and mystery stories":"Historias de detectives",
+    "Sea stories":"Historias del mar",
+    "Ghost stories":"Historias de fantasmas"
+  };
+
+  function crearCardResultado(libro){
+    const card = document.createElement('article');
+    card.className = 'card';
+    const autor = libro.author_name ? libro.author_name.join(', ') : 'Autor desconocido';
+    const anio = libro.first_publish_year ? libro.first_publish_year : '—';
+    const idiomaCode = libro.language ? libro.language[0] : null;
+    const idioma = idiomaCode ? (IDIOMAS[idiomaCode] || idiomaCode) : 'Idioma sin confirmar';
+    const synopsis = libro.subject
+      ? libro.subject
+          .slice(0, 3)
+          .map(s => TRADUCCIONES[s] || s)
+          .join(" · ")
+      : "Disponible para lectura en Internet Archive.";
+
+    card.innerHTML = `
+      <span class="call-number">${anio} · ${idioma}</span>
+      <h3>${libro.title}</h3>
+      <div class="author">${autor}</div>
+      <p class="synopsis">${synopsis}</p>
+      <div class="card-footer">
+        <span class="stamp sage">Catálogo</span>
+        <button class="read-link">
+          Leer ahora
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+        </button>
+      </div>
+    `;
+    card.querySelector('.read-link').addEventListener('click', () => abrirVisor(libro.ia[0]));
+    return card;
+  }
+
+  // términos de búsqueda por categoría para la auto-carga
+  const QUERY_POR_GENERO = {
+    todos: 'fiction',
+    novela: 'novel',
+    aventura: 'adventure',
+    terror: 'horror',
+    misterio: 'mystery detective',
+    fantasia: 'fantasy'
+  };
+
+  let autoOffset = 0;
+  let autoCargando = false;
+  let autoSinMas = false;
+  const AUTO_POR_LOTE = 18;
+
+  function renderDestacados(){
+    // pinea los destacados arriba, filtrados por categoría
+    const results = destacados.filter(b => activeGenre === 'todos' || b.genre.includes(activeGenre));
+    catalog.innerHTML = '';
+    results.forEach(b => catalog.appendChild(crearCardDestacado(b)));
+    statCount.textContent = results.length;
+    catalog.appendChild(sentinel);
+  }
+
+  async function cargarLoteAutomatico(){
+    if(autoCargando || autoSinMas || modo !== 'destacados') return;
+    autoCargando = true;
+    statusText.textContent = 'Trayendo más libros…';
+
+    try {
+      const termino = QUERY_POR_GENERO[activeGenre] || 'fiction';
+      // pedimos de más porque luego filtramos los que no son de lectura libre completa
+      const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(termino)}&language=spa&offset=${autoOffset}&limit=${AUTO_POR_LOTE * 2}&fields=title,author_name,first_publish_year,subject,language,ia,public_scan_b`;
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('respuesta no válida');
+      const data = await res.json();
+      const disponibles = (data.docs || [])
+        .filter(w => w.ia && w.ia.length > 0 && w.public_scan_b === true)
+        .slice(0, AUTO_POR_LOTE);
+
+      disponibles.forEach(libro => catalog.insertBefore(crearCardResultado(libro), sentinel));
+
+      autoOffset += AUTO_POR_LOTE * 2;
+      const totalCargados = catalog.children.length - 1; // -1 por el sentinel invisible
+      statCount.textContent = totalCargados;
+      statusText.textContent = `${totalCargados} libros cargados`;
+
+      if((data.docs || []).length === 0){
+        autoSinMas = true;
+        statusText.textContent = `${totalCargados} libros cargados · fin de esta categoría`;
+      }
+    } catch(err){
+      console.error(err);
+      statusText.textContent = 'Hubo un error trayendo más libros.';
+    } finally {
+      autoCargando = false;
+    }
+  }
+
+  function reiniciarAutoCarga(){
+    modo = 'destacados';
+    autoOffset = 0;
+    autoSinMas = false;
+    loadMoreWrap.style.display = 'none';
+    renderDestacados();
+    cargarLoteAutomatico();
+  }
+
+  // Sentinel: cuando se ve el fondo del catálogo, pide el siguiente lote solo
+  const sentinel = document.createElement('div');
+  sentinel.id = 'sentinel';
+  sentinel.style.gridColumn = '1/-1';
+  sentinel.style.height = '1px';
+  const observer = new IntersectionObserver((entries) => {
+    if(entries[0].isIntersecting) cargarLoteAutomatico();
+  }, { rootMargin: '600px' });
+
+  function normalizar(s){
+    return s
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quita tildes
+      .replace(/[^a-z0-9]/g, ''); // quita puntos, espacios, comas, etc.
+  }
+
+  async function buscarEnCatalogo(){
+    statusText.textContent = 'Buscando…';
+    loadMoreBtn.disabled = true;
+
+    // 1) primero buscamos dentro de la lista curada (destacados) por título o autor —
+    //    normalizando para que "hp lovecraft" encuentre "H. P. Lovecraft"
+    const qNorm = normalizar(queryActual);
+    const coincidenciasLocales = destacados.filter(b =>
+      normalizar(b.title + ' ' + b.author).includes(qNorm)
+    );
+
+    if(paginaActual === 1){
+      catalog.innerHTML = '';
+      coincidenciasLocales.forEach(b => catalog.appendChild(crearCardDestacado(b)));
+      statCount.textContent = catalog.children.length;
+    }
+
+    // 2) luego pedimos resultados de Open Library
+    try {
+      const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(queryActual)}&language=spa&page=${paginaActual}&limit=${RESULTADOS_POR_PAGINA}&fields=title,author_name,first_publish_year,subject,language,ia,public_scan_b`;
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('respuesta no válida');
+
+      const data = await res.json();
+      const disponibles = (data.docs || []).filter(w => w.ia && w.ia.length > 0 && w.public_scan_b === true);
+
+      if(paginaActual === 1 && coincidenciasLocales.length === 0 && disponibles.length === 0){
+        catalog.innerHTML = `
+          <div class="empty">
+            No encontramos una copia gratuita de eso.<br><br>
+            <span style="opacity:0.75;font-size:0.8rem;">
+              Puede que el título no exista, o que sea un libro reciente que todavía tiene
+              derechos de autor vigentes — este catálogo solo muestra obras de dominio público
+              (autor fallecido hace más de 70 años, casi siempre). Prueba con un clásico o revisa
+              el título y el autor.
+            </span>
+          </div>`;
+        statCount.textContent = 0;
+        statusText.textContent = '';
+        loadMoreWrap.style.display = 'none';
+        return;
+      }
+
+      disponibles.forEach(libro => catalog.appendChild(crearCardResultado(libro)));
+      statCount.textContent = catalog.children.length;
+      statusText.textContent = `resultados para "${queryActual}"`;
+      loadMoreWrap.style.display = disponibles.length > 0 ? 'block' : 'none';
+      loadMoreBtn.disabled = false;
+      loadMoreBtn.textContent = 'Cargar más libros';
+    } catch(err){
+      console.error(err);
+      statusText.textContent = coincidenciasLocales.length > 0
+        ? `resultados para "${queryActual}" (solo del catálogo curado — hubo un error consultando Open Library)`
+        : 'Hubo un error buscando. Intenta de nuevo.';
+      loadMoreBtn.disabled = false;
+      loadMoreBtn.textContent = 'Cargar más libros';
+    }
+  }
+
+  filters.addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+    filters.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeGenre = chip.dataset.genre;
+    if(searchInput.value.trim().length >= 3){
+      // si hay una búsqueda activa, no tocamos la auto-carga
+      return;
+    }
+    reiniciarAutoCarga();
+  });
+
+  searchInput.addEventListener('input', (e) => {
+    const q = e.target.value.trim();
+    clearTimeout(debounceTimer);
+
+    if(q.length < 3){
+      reiniciarAutoCarga();
+      return;
+    }
+
+    debounceTimer = setTimeout(() => {
+      modo = 'busqueda';
+      queryActual = q;
+      paginaActual = 1;
+      buscarEnCatalogo();
+    }, 400);
+  });
+
+  loadMoreBtn.addEventListener('click', () => {
+    paginaActual++;
+    loadMoreBtn.disabled = true;
+    loadMoreBtn.textContent = 'Cargando…';
+    buscarEnCatalogo();
+  });
+
+  // ---------- visor modal para resultados de búsqueda (Internet Archive) ----------
+  function abrirVisor(iaId){
+    // Usamos /embed/ (no /details/) porque /details/ bloquea ser incrustado en un iframe.
+    document.getElementById('visorIframe').src = `https://archive.org/embed/${iaId}`;
+    document.getElementById('visorContainer').style.display = 'block';
+  }
+  document.getElementById('cerrarVisor').addEventListener('click', () => {
+    document.getElementById('visorContainer').style.display = 'none';
+    document.getElementById('visorIframe').src = '';
+  });
+
+  function tickClock(){
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleDateString('es-ES', { day:'2-digit', month:'short', year:'numeric' });
+  }
+  tickClock();
+
+  renderDestacados();
+  observer.observe(sentinel);
+  cargarLoteAutomatico();
+</script>
+
+</body>
+</html>

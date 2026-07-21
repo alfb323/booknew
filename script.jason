@@ -1,0 +1,70 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('search');
+  const filterButtons = document.querySelectorAll('.filter');
+  const cards = document.querySelectorAll('.card');
+  const emptyMessage = document.getElementById('empty');
+
+  let currentFilter = 'todos';
+  let searchQuery = '';
+  let debounceTimer;
+
+  // Lógica centralizada para filtrar tarjetas en base al buscador y los botones
+  function filterCards() {
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const cardTags = card.getAttribute('data-tags') || '';
+      // Captura todo el texto legible dentro de la tarjeta (Títulos y descripciones)
+      const cardText = card.textContent.toLowerCase();
+
+      // Comprobaciones simultáneas
+      const matchesFilter = (currentFilter === 'todos' || cardTags.includes(currentFilter));
+      const matchesSearch = cardText.includes(searchQuery);
+
+      if (matchesFilter && matchesSearch) {
+        card.style.display = '';
+        card.removeAttribute('hidden');
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+        card.setAttribute('hidden', 'true');
+      }
+    });
+
+    // Control del mensaje de error
+    if (visibleCount === 0) {
+      emptyMessage.removeAttribute('hidden');
+      emptyMessage.style.display = 'block';
+    } else {
+      emptyMessage.setAttribute('hidden', 'true');
+      emptyMessage.style.display = 'none';
+    }
+  }
+
+  // Escuchar entrada de texto con debounce para que no falle al escribir rápido
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        filterCards();
+      }, 100);
+    });
+  }
+
+  // Escuchar el clic sobre los botones de filtrado por tags
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      filterButtons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+      });
+
+      button.classList.add('active');
+      button.setAttribute('aria-pressed', 'true');
+
+      currentFilter = button.getAttribute('data-filter');
+      filterCards();
+    });
+  });
+});
